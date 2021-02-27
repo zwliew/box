@@ -1,0 +1,28 @@
+{
+  "name": "box",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "precommit": "lint-staged",
+    "dev": "concurrently -k -p \"[{name}]\" -n \"Backend\" -c \"yellow.bold,cyan.bold,white.bold\" \"npm run dev:backend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "postinstall": "npm run postinstall:backend",
+    "postinstall:backend": "cd backend && npm install"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^6.0.0",
+    "husky": "^4.3.8",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.2.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js,css,md}": "prettier --write"
+  }
+}
