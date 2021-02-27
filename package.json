@@ -4,10 +4,12 @@
   "description": "",
   "scripts": {
     "precommit": "lint-staged",
-    "dev": "concurrently -k -p \"[{name}]\" -n \"Backend\" -c \"yellow.bold,cyan.bold,white.bold\" \"npm run dev:backend\"",
+    "dev": "concurrently -k -p \"[{name}]\" -n \"Backend,Frontend\" -c \"yellow.bold,cyan.bold,white.bold\" \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "cd backend && npm run dev",
-    "postinstall": "npm run postinstall:backend",
-    "postinstall:backend": "cd backend && npm install"
+    "dev:frontend": "cd frontend && npm run dev",
+    "postinstall": "npm run postinstall:backend && npm run postinstall:frontend",
+    "postinstall:backend": "cd backend && npm install",
+    "postinstall:frontend": "cd frontend && npm install"
   },
   "author": "",
   "license": "MIT",
