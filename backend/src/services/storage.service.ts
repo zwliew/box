@@ -1,9 +1,7 @@
-import type {
-  GetObjectCommandOutput,
-  ListObjectsV2CommandOutput,
-} from "@aws-sdk/client-s3";
+import type { GetObjectCommandOutput } from "@aws-sdk/client-s3";
 import S3Service from "./s3.service";
 import logger from "../logger";
+import { Folder } from "../interfaces";
 
 class StorageService {
   client: S3Service;
@@ -12,7 +10,7 @@ class StorageService {
     this.client = new S3Service();
   }
 
-  async list(path: string): Promise<string[] | undefined> {
+  async list(path: string): Promise<Folder | undefined> {
     try {
       const data = await this.client.listObjects(path);
       return data;
