@@ -4,9 +4,8 @@ import logger from "../logger";
 
 async function list(req: Request, res: Response, next: NextFunction) {
   try {
-    const result = await ApiService.list(req.path);
-    logger.info(result);
-    res.send(result);
+    const data = await ApiService.list(req.path);
+    res.json(data);
   } catch (err) {
     logger.error(err);
     next(err);
@@ -15,7 +14,8 @@ async function list(req: Request, res: Response, next: NextFunction) {
 
 async function view(req: Request, res: Response, next: NextFunction) {
   try {
-    res.end();
+    const data = await ApiService.view(req.path);
+    res.json(data);
   } catch (err) {
     logger.error(err);
     next(err);

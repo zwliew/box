@@ -1,7 +1,8 @@
+import type { GetObjectOutput } from "@aws-sdk/client-s3";
 import StorageService from "./storage.service";
 import logger from "../logger";
 
-async function list(path: string) {
+async function list(path: string): Promise<string[] | undefined> {
   const storageService = new StorageService();
   try {
     const fileNames = await storageService.list(path);
@@ -11,6 +12,17 @@ async function list(path: string) {
   }
 }
 
+async function view(path: string): Promise<GetObjectOutput | undefined> {
+  const storageService = new StorageService();
+  try {
+    const fileDetails = await storageService.view(path);
+    return fileDetails;
+  } catch (err) {
+    logger.error(err);
+  }
+}
+
 export default {
   list,
+  view,
 };
