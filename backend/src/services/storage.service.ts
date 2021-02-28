@@ -1,7 +1,6 @@
-import type { GetObjectCommandOutput } from "@aws-sdk/client-s3";
 import { S3Service } from "@root/services";
 import logger from "@root/logger";
-import { Folder } from "@root/interfaces";
+import { FolderDetails, FileDetails } from "@root/interfaces";
 
 class StorageService {
   client: S3Service;
@@ -10,7 +9,7 @@ class StorageService {
     this.client = new S3Service();
   }
 
-  async list(path: string): Promise<Folder | undefined> {
+  async list(path: string): Promise<FolderDetails | undefined> {
     try {
       const data = await this.client.listObjects(path);
       return data;
@@ -20,10 +19,15 @@ class StorageService {
     }
   }
 
-  async view(path: string): Promise<GetObjectCommandOutput | undefined> {
+  async view(path: string): Promise<FileDetails | undefined> {
     try {
-      const data = await this.client.getObject(path);
-      return data;
+      const head = await this.client.headObject(path);
+      if (!head) {
+        return undefined;
+      }
+
+      const url = await this.client.getObject(path);
+      return { ...head, url };
     } catch (err) {
       logger.error(err);
       return undefined;

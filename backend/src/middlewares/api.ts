@@ -11,15 +11,11 @@ async function list(_: Request, res: Response, next: NextFunction) {
   const path = res.locals["path"];
   logger.info(`Listing ${path}`);
   try {
-    const data = await ApiService.list(path);
-    if (data) {
-      res
-        .status(200)
-        .json({ message: "OK", folders: data.folders, files: data.files });
+    const folder = await ApiService.list(path);
+    if (folder) {
+      res.status(200).json({ message: "OK", ...folder });
     } else {
-      const err = new Error("Failed to list folder");
-      logger.error(err);
-      next(err);
+      res.status(404).json({ message: "Not Found" });
     }
   } catch (err) {
     logger.error(err);
@@ -35,8 +31,12 @@ async function view(_: Request, res: Response, next: NextFunction) {
   const path = res.locals["path"];
   logger.info(`Viewing ${path}`);
   try {
-    const data = await ApiService.view(path);
-    res.json(data);
+    const file = await ApiService.view(path);
+    if (file) {
+      res.status(200).json({ message: "OK", ...file });
+    } else {
+      res.status(404).json({ message: "Not Found" });
+    }
   } catch (err) {
     logger.error(err);
     next(err);
