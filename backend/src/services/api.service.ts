@@ -1,7 +1,7 @@
 import type { GetObjectOutput } from "@aws-sdk/client-s3";
-import StorageService from "./storage.service";
-import logger from "../logger";
-import { Folder } from "../interfaces";
+import { StorageService } from "@root/services";
+import logger from "@root/logger";
+import { Folder } from "@root/interfaces";
 
 async function list(path: string): Promise<Folder | undefined> {
   const storageService = new StorageService();
@@ -10,6 +10,7 @@ async function list(path: string): Promise<Folder | undefined> {
     return fileNames;
   } catch (err) {
     logger.error(err);
+    return undefined;
   }
 }
 
@@ -20,6 +21,7 @@ async function view(path: string): Promise<GetObjectOutput | undefined> {
     return fileDetails;
   } catch (err) {
     logger.error(err);
+    return undefined;
   }
 }
 

@@ -1,7 +1,7 @@
 import express from "express";
 import helmet from "helmet";
-import routers from "./routes";
-import { rateLimit } from "./middlewares";
+import routers from "@root/routes";
+import { rateLimit } from "@root/middlewares";
 
 const app = express();
 app.use(helmet());

@@ -1,9 +1,8 @@
 import { Router } from "express";
-import { ApiMiddleware } from "../middlewares";
+import apiRouter from "./api";
 
 const router = Router({ caseSensitive: true, strict: true });
 
-router.get("*/", ApiMiddleware.list);
-router.get("*", ApiMiddleware.view);
+router.use("/api", apiRouter);
 
 export default router;

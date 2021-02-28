@@ -1,7 +1,7 @@
 import type { GetObjectCommandOutput } from "@aws-sdk/client-s3";
-import S3Service from "./s3.service";
-import logger from "../logger";
-import { Folder } from "../interfaces";
+import { S3Service } from "@root/services";
+import logger from "@root/logger";
+import { Folder } from "@root/interfaces";
 
 class StorageService {
   client: S3Service;
@@ -16,6 +16,7 @@ class StorageService {
       return data;
     } catch (err) {
       logger.error(err);
+      return undefined;
     }
   }
 
@@ -25,6 +26,7 @@ class StorageService {
       return data;
     } catch (err) {
       logger.error(err);
+      return undefined;
     }
   }
 }

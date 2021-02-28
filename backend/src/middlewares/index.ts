@@ -1,2 +1,2 @@
-export { default as ApiMiddleware } from "./api.middleware";
-export { default as rateLimit } from "./rate-limit.middleware";
+export { default as ApiMiddleware } from "./api";
+export { default as rateLimit } from "./rate-limit";

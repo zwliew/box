@@ -5,21 +5,19 @@ import {
   GetObjectCommandOutput,
 } from "@aws-sdk/client-s3";
 
-import logger from "../logger";
-import config from "../config";
-import { Folder } from "../interfaces";
+import logger from "@root/logger";
+import config from "@root/config";
+import { Folder } from "@root/interfaces";
 
 const REGION = config.get("aws.s3Region");
 const BUCKET_NAME = config.get("aws.s3Bucket");
 
-function normalizePath(path: string) {
-  path = path.trim();
-  if (!path.endsWith("/")) {
-    path += "/";
-  }
-  while (path.startsWith("/")) {
-    path = path.substring(1);
-  }
+function normalizePath(path: string): string {
+  // Remove all leading slashes
+  let leadingCnt = 0;
+  for (let i = 0; i < path.length && path[i] === "/"; ++i, ++leadingCnt);
+  path = path.substring(leadingCnt);
+
   return path;
 }
 
@@ -31,8 +29,9 @@ class S3Service {
   }
 
   async listObjects(path: string): Promise<Folder | undefined> {
+    path = normalizePath(path);
+    logger.info(`Listing objects at ${path}`);
     try {
-      path = normalizePath(path);
       const data = await this.client.send(
         new ListObjectsV2Command({
           Bucket: BUCKET_NAME,
@@ -55,18 +54,21 @@ class S3Service {
       return { files, folders };
     } catch (err) {
       logger.error(err);
+      return undefined;
     }
   }
 
   async getObject(path: string): Promise<GetObjectCommandOutput | undefined> {
+    path = normalizePath(path);
+    logger.info(`Getting object at ${path}`);
     try {
-      path = normalizePath(path);
       const data = await this.client.send(
         new GetObjectCommand({ Bucket: BUCKET_NAME, Key: path })
       );
       return data;
     } catch (err) {
       logger.error(err);
+      return undefined;
     }
   }
 }
