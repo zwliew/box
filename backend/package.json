@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.7.0",
     "@aws-sdk/s3-request-presigner": "^3.7.0",
     "convict": "^6.0.0",
     "dotenv": "^8.2.0",
