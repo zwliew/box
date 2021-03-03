@@ -1,3 +1,3 @@
-export { default as ApiService } from "./api.service";
-export { default as StorageService } from "./storage.service";
-export { default as S3Service } from "./s3.service";
+export { default as ApiService } from "./api";
+export { default as StorageService } from "./storage";
+export { default as S3Service } from "./s3";
