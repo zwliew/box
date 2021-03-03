@@ -13,9 +13,9 @@ async function list(_: Request, res: Response, next: NextFunction) {
   try {
     const folder = await ApiService.list(path);
     if (folder) {
-      res.status(200).json({ message: "OK", ...folder });
+      res.status(200).json(folder);
     } else {
-      res.status(404).json({ message: "Not Found" });
+      res.sendStatus(404);
     }
   } catch (err) {
     logger.error(err);
@@ -33,9 +33,9 @@ async function view(_: Request, res: Response, next: NextFunction) {
   try {
     const file = await ApiService.view(path);
     if (file) {
-      res.status(200).json({ message: "OK", ...file });
+      res.status(200).json(file);
     } else {
-      res.status(404).json({ message: "Not Found" });
+      res.sendStatus(404);
     }
   } catch (err) {
     logger.error(err);

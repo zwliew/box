@@ -6,6 +6,7 @@ const rateLimit = expressRateLimit({
     status: 429,
     message: "Too many requests. Please try again later.",
   },
+  windowMs: 1000,
 });
 
 export default rateLimit;

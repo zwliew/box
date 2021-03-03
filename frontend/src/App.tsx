@@ -4,17 +4,28 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 import theme from "./theme";
 import Explore from "./pages/Explore";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+    },
+  },
+});
 
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      <Router>
-        <Switch>
-          <Route path="/">
-            <Explore />
-          </Route>
-        </Switch>
-      </Router>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <Switch>
+            <Route path="/">
+              <Explore />
+            </Route>
+          </Switch>
+        </Router>
+      </QueryClientProvider>
     </ChakraProvider>
   );
 }

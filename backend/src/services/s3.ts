@@ -69,7 +69,7 @@ class S3Service {
       const data = await this.client.send(command);
 
       // Folder does not exist
-      if (!data.Contents) {
+      if (!data.Contents && !data.CommonPrefixes) {
         return undefined;
       }
 
