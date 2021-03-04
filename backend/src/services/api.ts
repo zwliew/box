@@ -24,7 +24,17 @@ async function view(path: string): Promise<FileDetails | undefined> {
   }
 }
 
+async function remove(path: string): Promise<void> {
+  const storageService = new StorageService();
+  try {
+    await storageService.remove(path);
+  } catch (err) {
+    logger.error(err);
+  }
+}
+
 export default {
   list,
   view,
+  remove,
 };

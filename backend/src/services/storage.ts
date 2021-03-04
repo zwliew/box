@@ -33,6 +33,14 @@ class StorageService {
       return undefined;
     }
   }
+
+  async remove(path: string): Promise<void> {
+    try {
+      await this.client.deleteObject(path);
+    } catch (err) {
+      logger.error(err);
+    }
+  }
 }
 
 export default StorageService;
