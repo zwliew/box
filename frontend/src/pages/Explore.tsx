@@ -102,6 +102,12 @@ function FolderView({
   );
 }
 
+function camelCaseToWords(camelCased: string) {
+  const REGEX = /([^A-Z])([A-Z])/g
+  const pascalCased = camelCased[0].toUpperCase() + camelCased.slice(1);
+  return pascalCased.replaceAll(REGEX, '$1 $2')
+}
+
 function FileDetailsDrawer({
   path,
   data,
@@ -136,7 +142,7 @@ function FileDetailsDrawer({
             }
             return (
               <ListItem key={k}>
-                <Text as="b">{k}</Text>: {v}
+                <Text as="b">{camelCaseToWords(k)}</Text>: {v}
               </ListItem>
             );
           })}
