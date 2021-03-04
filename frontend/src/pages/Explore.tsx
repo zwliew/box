@@ -15,6 +15,8 @@ import {
   DrawerBody,
   Drawer,
   Text,
+  DrawerFooter,
+  Button,
 } from "@chakra-ui/react";
 import React, { ReactNode, useState } from "react";
 import { useQuery } from "react-query";
@@ -100,6 +102,55 @@ function FolderView({
   );
 }
 
+function FileDetailsDrawer({
+  path,
+  data,
+  isLoading,
+  error,
+}: {
+  path?: string;
+  data: Record<string, any>;
+  isLoading: boolean;
+  error: any;
+}) {
+  if (isLoading) {
+    return <>Loading...</>;
+  }
+
+  if (error) {
+    return <Error error={error} />;
+  }
+
+  if (!path) {
+    return null;
+  }
+
+  return (
+    <>
+      <DrawerHeader>{path.slice(path.lastIndexOf("/") + 1)}</DrawerHeader>
+      <DrawerBody>
+        <List>
+          {Object.entries(data).map(([k, v]) => {
+            if (k === "url") {
+              return null;
+            }
+            return (
+              <ListItem key={k}>
+                <Text as="b">{k}</Text>: {v}
+              </ListItem>
+            );
+          })}
+        </List>
+      </DrawerBody>
+      <DrawerFooter>
+        <Link rel="noopener noreferrer" target="_blank" href={data.url}>
+          <Button>Download</Button>
+        </Link>
+      </DrawerFooter>
+    </>
+  );
+}
+
 function Explore() {
   const [file, setFile] = useState<string | undefined>();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -119,7 +170,14 @@ function Explore() {
     ["file", file],
     async () => {
       const res = await fetch(`${API_URL}${file}`);
-      return res.json();
+      const data = await res.json();
+      if (data.hasOwnProperty("lastModified")) {
+        data.lastModified = new Date(data.lastModified).toString();
+      }
+      if (data.hasOwnProperty("size")) {
+        data.size = `${data.size} bytes`;
+      }
+      return data;
     },
     {
       enabled: !!file,
@@ -131,41 +189,6 @@ function Explore() {
   function handleFileClick(path: string) {
     setFile(path);
     onOpen();
-  }
-
-  function FileDetailsDrawer({
-    path,
-    data,
-  }: {
-    path?: string;
-    data: Record<string, any>;
-  }) {
-    if (isFileLoading) {
-      return <>Loading...</>;
-    }
-
-    if (fileError) {
-      return <Error error={error} />;
-    }
-
-    if (!path) {
-      return null;
-    }
-
-    return (
-      <>
-        <DrawerHeader>{path.slice(path.lastIndexOf("/") + 1)}</DrawerHeader>
-        <DrawerBody>
-          <List>
-            {Object.entries(data).map(([k, v]) => (
-              <ListItem key={k}>
-                <Text as="b">{k}</Text>: {v}
-              </ListItem>
-            ))}
-          </List>
-        </DrawerBody>
-      </>
-    );
   }
 
   return (
@@ -199,7 +222,12 @@ function Explore() {
         <DrawerOverlay>
           <DrawerContent>
             <DrawerCloseButton />
-            <FileDetailsDrawer path={file} data={fileData} />
+            <FileDetailsDrawer
+              path={file}
+              data={fileData}
+              isLoading={isFileLoading}
+              error={fileError}
+            />
           </DrawerContent>
         </DrawerOverlay>
       </Drawer>
