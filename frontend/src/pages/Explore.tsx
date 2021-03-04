@@ -23,6 +23,7 @@ import { useQuery } from "react-query";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 import FileIcon from "../components/icons/FileIcon";
 import FolderIcon from "../components/icons/FolderIcon";
+import { ApiService } from "../services";
 
 interface PathFragment {
   display: string;
@@ -103,9 +104,9 @@ function FolderView({
 }
 
 function camelCaseToWords(camelCased: string) {
-  const REGEX = /([^A-Z])([A-Z])/g
+  const REGEX = /([^A-Z])([A-Z])/g;
   const pascalCased = camelCased[0].toUpperCase() + camelCased.slice(1);
-  return pascalCased.replaceAll(REGEX, '$1 $2')
+  return pascalCased.replaceAll(REGEX, "$1 $2");
 }
 
 function FileDetailsDrawer({
@@ -149,7 +150,10 @@ function FileDetailsDrawer({
         </List>
       </DrawerBody>
       <DrawerFooter>
-        <Link rel="noopener noreferrer" target="_blank" href={data.url}>
+        <Button variant="ghost" onClick={() => ApiService.remove(path)}>
+          Delete
+        </Button>
+        <Link isExternal href={data.url} _hover={{ textDecoration: "none" }} ml={4}>
           <Button>Download</Button>
         </Link>
       </DrawerFooter>
@@ -162,12 +166,10 @@ function Explore() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { pathname } = useLocation();
   const path = normalizePath(pathname);
-  const url = `${API_URL}${path}`;
 
-  const { isLoading, error, data } = useQuery(path, async () => {
-    const res = await fetch(url);
-    return res.json();
-  });
+  const { isLoading, error, data } = useQuery(path, () =>
+    ApiService.list(path)
+  );
   const {
     isLoading: isFileLoading,
     error: fileError,
@@ -175,8 +177,9 @@ function Explore() {
   } = useQuery(
     ["file", file],
     async () => {
-      const res = await fetch(`${API_URL}${file}`);
-      const data = await res.json();
+      if (!file) return;
+
+      const data = await ApiService.view(file);
       if (data.hasOwnProperty("lastModified")) {
         data.lastModified = new Date(data.lastModified).toString();
       }

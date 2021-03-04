@@ -10,6 +10,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import logger from "@root/logger";
 import config from "@root/config";
 import { FileDetails, FolderDetails } from "@root/interfaces";
+import { NotFoundError } from "@root/errors";
 
 const REGION = config.get("aws.s3Region");
 const BUCKET_NAME = config.get("aws.s3Bucket");
@@ -19,7 +20,6 @@ function normalizePath(path: string): string {
   let leadingCnt = 0;
   for (let i = 0; i < path.length && path[i] === "/"; ++i, ++leadingCnt);
   path = path.substring(leadingCnt);
-
   return path;
 }
 
@@ -30,19 +30,22 @@ class S3Service {
     this.client = new S3Client({ region: REGION });
   }
 
-  async headObject(path: string): Promise<FileDetails | undefined> {
+  async headObject(path: string): Promise<FileDetails> {
     path = normalizePath(path);
     logger.info(`Getting details of ${path}`);
+
     const command = new HeadObjectCommand({
       Bucket: BUCKET_NAME,
       Key: path,
     });
-    const { ContentType, ContentLength, LastModified } = await this.client.send(
-      command
-    );
+    const data = await this.client.send(command);
+    const { ContentType, ContentLength, LastModified } = data;
+
+    // File does not exist
     if (!ContentType || !ContentLength || !LastModified) {
-      return undefined;
+      throw new NotFoundError();
     }
+
     return {
       type: ContentType,
       size: ContentLength,
@@ -50,7 +53,7 @@ class S3Service {
     };
   }
 
-  async listObjects(path: string): Promise<FolderDetails | undefined> {
+  async listObjects(path: string): Promise<FolderDetails> {
     path = normalizePath(path);
     logger.info(`Listing objects at ${path}`);
 
@@ -63,7 +66,7 @@ class S3Service {
 
     // Folder does not exist
     if (!data.Contents && !data.CommonPrefixes) {
-      return undefined;
+      throw new NotFoundError();
     }
 
     // Extract files and folders
@@ -83,7 +86,7 @@ class S3Service {
     return { files, folders };
   }
 
-  async getObject(path: string): Promise<string | undefined> {
+  async getObject(path: string): Promise<string> {
     path = normalizePath(path);
     logger.info(`Getting object at ${path}`);
 
