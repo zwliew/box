@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import theme from "./theme";
-import Explore from "./pages/Explore";
 import { QueryClient, QueryClientProvider } from "react-query";
+import Explore from "./explore";
 
 const queryClient = new QueryClient({
   defaultOptions: {
