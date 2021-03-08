@@ -32,6 +32,6 @@
   "author": "",
   "license": "MIT",
   "_moduleAliases": {
-    "@root": "./src"
+    "@root": "build"
   }
 }
