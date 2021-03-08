@@ -1,6 +1,6 @@
 import { ListApiResponse, ViewApiResponse } from "./interfaces";
 
-const API_URL = "http://localhost:4000/api";
+const { VITE_APP_API_URL: API_URL } = import.meta.env;
 
 async function view(path: string): Promise<ViewApiResponse> {
   const res = await fetch(`${API_URL}${path}`);
