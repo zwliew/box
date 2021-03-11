@@ -119,7 +119,7 @@ function FileDetailsDrawer({
               }
               return (
                 <ListItem key={k}>
-                  <Text as="b">{camelCaseToWords(k)}</Text>: {v}
+                  <Text as="b">{camelCaseToWords(k)}</Text>: {v.toString()}
                 </ListItem>
               );
             })}
