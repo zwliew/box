@@ -1,6 +1,5 @@
 import { ListApiResponse, ViewApiResponse } from "./interfaces";
-
-const { VITE_APP_API_URL: API_URL } = import.meta.env;
+import { API_URL } from "../config";
 
 async function view(path: string): Promise<ViewApiResponse> {
   const res = await fetch(`${API_URL}${path}`);
